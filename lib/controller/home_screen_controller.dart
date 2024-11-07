@@ -1,41 +1,41 @@
-
+import 'dart:developer';
 import 'package:sqflite/sqflite.dart';
 
-class HomeScreenController  {
+class HomeScreenController {
   static late Database myDatabase;
   static List<Map> NoteDataList = [];
-  
 
   static Future initDb() async {
-
-    myDatabase = await openDatabase("Note.Db", version: 1,
+    myDatabase = await openDatabase("Notedb2.Db", version: 1,
         onCreate: (Database db, int version) async {
-   
       await db.execute(
-          'CREATE TABLE Note (id INTEGER PRIMARY KEY, Title TEXT, Text TEXT,date TEXT)');
+          'CREATE TABLE Note12 (id INTEGER PRIMARY KEY, Title TEXT, Text TEXT, date TEXT)');
     });
   }
 
-// add 
-  static Future addNote({
-    required String Title,
-    required String Text,
-  }) async {
-     String currentDate = DateTime.now().toIso8601String();
+// add
+  static Future addNote(
+      {required String Title,
+      required String Text,
+      required String Datestring}) async {
     await myDatabase.rawInsert(
-        'INSERT INTO Note (Title, Text) VALUES(?, ?)', [Title, Text]);
+        'INSERT INTO Note12 (Title, Text, date) VALUES(?, ?, ?)',
+        [Title, Text, Datestring]);
     getAllNote();
   }
 
-
 // database display all data
   static Future getAllNote() async {
-    NoteDataList = await myDatabase.rawQuery('SELECT * FROM Note');
+    String currentSelectedDate ;
+
+    NoteDataList = await myDatabase
+        .rawQuery('SELECT * FROM Note12 WHERE date =?', []);
+    log(NoteDataList.toString());
   }
 
 //remove the database
   static Future removeNote(int id) async {
-    await myDatabase.rawDelete('DELETE FROM Note WHERE id = ?', [id]);
+    await myDatabase.rawDelete('DELETE FROM Note12 WHERE id = ?', [id]);
     getAllNote();
   }
 
@@ -46,7 +46,7 @@ class HomeScreenController  {
     int id,
   ) async {
     await myDatabase.rawUpdate(
-        'UPDATE Note SET Title = ?, Text = ? WHERE id = ?',
+        'UPDATE Note12 SET Title = ?, Text = ? WHERE id = ?',
         [newTitle, newText, id]);
     getAllNote();
   }

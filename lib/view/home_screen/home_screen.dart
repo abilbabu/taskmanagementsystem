@@ -11,6 +11,10 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool _isTaskCompleted = false;
+  var docDate = DateTime.now();
+  
+
   @override
   void initState() {
     super.initState();
@@ -24,192 +28,251 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: ColorConstants.primaryColor,
-        title: Text(
-          "Personal Note",
-          style: TextStyle(
+    return SafeArea(
+      child: Scaffold(
+        appBar: _buildAppBar(),
+        // floatingactionbutton
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: ColorConstants.primaryColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(color: ColorConstants.TextWhite, width: 2),
+          ),
+          onPressed: () {
+            _CustomBottomSheet(context);
+          },
+          child: Icon(
+            Icons.add,
             color: ColorConstants.TextWhite,
-            fontSize: 20,
-            fontWeight: FontWeight.w700,
+            size: 25,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.search,
-              color: ColorConstants.TextWhite,
-              size: 30,
-            ),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: Icon(
-              Icons.info_outline,
-              color: ColorConstants.TextWhite,
-              size: 30,
-            ),
-          ),
-        ],
-      ),
-      // floatingactionbutton
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: ColorConstants.primaryColor,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
-          side: BorderSide(color: ColorConstants.TextWhite, width: 2),
-        ),
-        onPressed: () {
-          _CustomBottomSheet(context);
-        },
-        child: Icon(
-          Icons.add,
-          color: ColorConstants.TextWhite,
-          size: 25,
-        ),
-      ),
-
-      // body
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Column(
-            children: [
-              EasyDateTimeLine(
-                initialDate: DateTime.now(),
-                onDateChange: (selectedDate) {
-
-                  // _CustomBottomSheet(context);
-                },
-                // month Style Add
-                headerProps: const EasyHeaderProps(
+      
+        // body
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                EasyDateTimeLine(
+                  initialDate: DateTime.now(),
+                  onDateChange: (selectedDate) {
+                    setState(() {
+                      docDate = selectedDate;
+                      
+                    });
+                    print("Selected Date: ${selectedDate}");
+                  },
+                  // Month style
+                  headerProps: const EasyHeaderProps(
                     monthPickerType: MonthPickerType.switcher,
                     dateFormatter: DateFormatter.fullDateDMY(),
                     monthStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold)),
-                // date style add
-                dayProps: const EasyDayProps(
-                  dayStructure: DayStructure.dayStrDayNum,
-                  activeDayStyle: DayStyle(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFF0448E6),
-                          Color(0xff8426D6),
-                        ],
-                      ),
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  inactiveDayStyle: DayStyle(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(8)),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Color(0xFFFFFFFF),
-                          Color(0xffFFBF9B),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              GridView.builder(
-                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  crossAxisSpacing: 10,
-                  mainAxisSpacing: 10,
-                ),
-                itemCount: HomeScreenController.NoteDataList.length,
-                shrinkWrap: true,
-                itemBuilder: (context, index) {
-                  return Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      border:
-                          Border.all(color: ColorConstants.TextWhite, width: 3),
-                    ),
-                    child: Stack(
-                      children: [
-                        ListTile(
-                          onTap: () {
-                            _CustomBottomSheet(
-                              context,
-                              isedit: true,
-                              currentTitle: HomeScreenController
-                                  .NoteDataList[index]["Title"],
-                              currentText: HomeScreenController
-                                  .NoteDataList[index]['Text'],
-                              Noteid: HomeScreenController.NoteDataList[index]
-                                  ["id"],
-                            );
-                          },
-                          title: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                HomeScreenController.NoteDataList[index]
-                                        ["Title"]
-                                    .toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                                maxLines: 1,
-                              ),
-                              SizedBox(height: 10),
-                              Text(
-                                HomeScreenController.NoteDataList[index]['Text']
-                                    .toString(),
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                                overflow: TextOverflow.ellipsis,
-                                maxLines: 5,
-                              ),
-                              
-                            ],
-                          ),
+                  // Day style
+                  dayProps: EasyDayProps(
+                    dayStructure: DayStructure.dayStrDayNum,
+                    // Active day style
+                    activeDayStyle: DayStyle(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFF0448E6),
+                            Color(0xff8426D6),
+                          ],
                         ),
-                        Positioned(
-                          top: 0,
-                          right: 0,
-                          child: IconButton(
-                            onPressed: () async {
-                              await HomeScreenController.removeNote(
-                                HomeScreenController.NoteDataList[index]["id"],
+                      ),
+                    ),
+                    // Inactive day style
+                    inactiveDayStyle: DayStyle(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFFFFFFF),
+                            Color(0xffFFBF9B),
+                          ],
+                        ),
+                      ),
+                    ),
+                    // today style color
+                    todayStyle: DayStyle(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.all(Radius.circular(8)),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Color(0xFFFFFFFF),
+                            Color(0xffFFBF9B),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                ),
+                GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                  ),
+                  itemCount: HomeScreenController.NoteDataList.length,
+                  shrinkWrap: true,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.all(Radius.circular(8)),
+                          border: Border.all(color: ColorConstants.TextWhite)),
+                      child: Stack(
+                        children: [
+                          ListTile(
+                            onTap: () {
+                              _CustomBottomSheet(
+                                context,
+                                isedit: true,
+                                currentTitle: HomeScreenController
+                                    .NoteDataList[index]["Title"],
+                                currentText: HomeScreenController
+                                    .NoteDataList[index]['Text'],
+                                Noteid: HomeScreenController.NoteDataList[index]
+                                    ["id"],
                               );
-                              setState(() {});
                             },
-                            icon: Icon(
-                              Icons.delete_outline,
-                              color: ColorConstants.TextWhite,
+                            title: Padding(
+                              padding: const EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      HomeScreenController.NoteDataList[index]
+                                              ["Title"]
+                                          .toString(),
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      maxLines: 1,
+                                    ),
+                                  ),
+                                  Text(
+                                    HomeScreenController.NoteDataList[index]
+                                            ['Text']
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 3,
+                                  ),
+                                  Text(
+                                    
+                                    HomeScreenController.NoteDataList[index]
+                                            ['date']
+                                        .toString(),
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                    ),
+                                  )
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ],
+                          Positioned(
+                            top: 0,
+                            right: 0,
+                            child: IconButton(
+                              onPressed: () async {
+                                await HomeScreenController.removeNote(
+                                  HomeScreenController.NoteDataList[index]["id"],
+                                );
+                                setState(() {});
+                              },
+                              icon: Icon(
+                                Icons.delete_outline,
+                                color: ColorConstants.TextWhite,
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                              top: 0,
+                              left: 0,
+                              child: IconButton(
+                                onPressed: () {
+                                  setState(() {
+                                    _isTaskCompleted = !_isTaskCompleted;
+                                  });
+                                },
+                                icon: Icon(
+                                  _isTaskCompleted
+                                      ? Icons.task_alt
+                                      : Icons.remove_circle_outline,
+                                  color: _isTaskCompleted
+                                      ? Colors.green
+                                      : Colors.red,
+                                ),
+                              )),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  AppBar _buildAppBar() {
+    return AppBar(
+      backgroundColor: ColorConstants.primaryColor,
+      title: Text(
+        "Personal Note",
+        style: TextStyle(
+          color: ColorConstants.TextWhite,
+          fontSize: 20,
+          fontWeight: FontWeight.w700,
+        ),
+      ),
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.search,
+            color: ColorConstants.TextWhite,
+            size: 30,
+          ),
+        ),
+        IconButton(
+          onPressed: () {},
+          icon: Icon(
+            Icons.info_outline,
+            color: ColorConstants.TextWhite,
+            size: 30,
+          ),
+        ),
+      ],
     );
   }
 
@@ -249,7 +312,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 SizedBox(height: 10),
                 TextField(
                   controller: textController,
-                  maxLines: 23,
                   decoration: InputDecoration(
                     border: OutlineInputBorder(
                       borderSide: BorderSide(color: ColorConstants.TextWhite),
@@ -287,9 +349,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             } else {
                               await HomeScreenController.addNote(
-                                Title: titleController.text,
-                                Text: textController.text,
-                              );
+                                  Title: titleController.text,
+                                  Text: textController.text,
+                                  Datestring: docDate.toString()
+                                  );
                             }
                             setState(() {});
                             Navigator.pop(context);
