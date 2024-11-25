@@ -1,4 +1,5 @@
 import 'dart:developer';
+
 import 'package:sqflite/sqflite.dart';
 
 class HomeScreenController {
@@ -25,11 +26,9 @@ class HomeScreenController {
   }
 
 // database display all data
-  static Future getAllNote() async {
-    String currentSelectedDate ;
-
+  static Future getAllNote({var currentSelectedDate}) async {
     NoteDataList = await myDatabase
-        .rawQuery('SELECT * FROM Note12 WHERE date =?', []);
+        .rawQuery('SELECT * FROM Note12 WHERE date =?', [currentSelectedDate]);
     log(NoteDataList.toString());
   }
 

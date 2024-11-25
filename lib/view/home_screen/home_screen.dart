@@ -13,14 +13,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   bool _isTaskCompleted = false;
   var docDate = DateTime.now();
-  
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback(
       (timeStamp) async {
-        await HomeScreenController.getAllNote();
+        await HomeScreenController.getAllNote(currentSelectedDate: docDate);
         setState(() {});
       },
     );
@@ -47,7 +46,7 @@ class _HomeScreenState extends State<HomeScreen> {
             size: 25,
           ),
         ),
-      
+
         // body
         body: SingleChildScrollView(
           child: Padding(
@@ -59,7 +58,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   onDateChange: (selectedDate) {
                     setState(() {
                       docDate = selectedDate;
-                      
                     });
                     print("Selected Date: ${selectedDate}");
                   },
@@ -155,7 +153,8 @@ class _HomeScreenState extends State<HomeScreen> {
                               padding: const EdgeInsets.all(10),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
                                 children: [
                                   Center(
                                     child: Text(
@@ -183,7 +182,6 @@ class _HomeScreenState extends State<HomeScreen> {
                                     maxLines: 3,
                                   ),
                                   Text(
-                                    
                                     HomeScreenController.NoteDataList[index]
                                             ['date']
                                         .toString(),
@@ -203,7 +201,8 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: IconButton(
                               onPressed: () async {
                                 await HomeScreenController.removeNote(
-                                  HomeScreenController.NoteDataList[index]["id"],
+                                  HomeScreenController.NoteDataList[index]
+                                      ["id"],
                                 );
                                 setState(() {});
                               },
@@ -351,8 +350,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               await HomeScreenController.addNote(
                                   Title: titleController.text,
                                   Text: textController.text,
-                                  Datestring: docDate.toString()
-                                  );
+                                  Datestring: docDate.toString());
                             }
                             setState(() {});
                             Navigator.pop(context);
